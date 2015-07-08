@@ -1,2 +1,3 @@
-# drink-at-work
-Drink enough water during your working hours
+# drink@work
+
+Drink enough water during your working hours.
