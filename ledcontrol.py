@@ -1,24 +1,38 @@
-import RPi.GPIO as GPIO
+qimport RPi.GPIO as GPIO
 
 # Code taken from http://razzpisampler.oreilly.com/ch04.html
 # Light n^2-n LEDs per Gpio (3gpio = 6leds, 4gpio = 12leds, 5gpio = 20leds)
 
-pins = [4, 17, 22]
+# GPIOs
+#pins = [11, 12, 13, 15]
+pins = [17, 18, 27, 22]
 
+# 1 High, 0 Low, -1 HighImpedance
 pin_led_states = [
-  [1, 0, -1], # A
-  [0, 1, -1], # B
-  [-1, 1, 0], # C
-  [-1, 0, 1], # D
-  [1, -1, 0], # E
-  [0, -1, 1]  # F
+  [1, -1, 0, -1], # 12
+  [1, -1, -1, 0], # 11
+  [0, -1, 1, -1], # 10
+  [0, -1, 1, -1], # 9
+  [-1, 0, 1, -1], # 8
+  [-1, 1, -1, 0], # 7
+  [-1, 1, 0, -1], # 6
+  [-1, 0, -1, 1], # 5
+  [1, 0, -1, -1], # 4
+  [-1, -1, 1, 0], # 3
+  [0, 1, -1, -1], # 2
+  [-1, -1, 0, 1]  # 1
 ]
 
+print "set mode to GPIO.BCM"
 GPIO.setmode(GPIO.BCM)
+#GPIO.setmode(GPIO.BOARD)
+
 
 def set_pin(pin_index, pin_state):
     if pin_state == -1:
+	print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to input"
         GPIO.setup(pins[pin_index], GPIO.IN)
+	print "success"
     else:
         GPIO.setup(pins[pin_index], GPIO.OUT)
         GPIO.output(pins[pin_index], pin_state)
@@ -29,10 +43,13 @@ def light_led(led_number):
 
 
 
+print "set all pins to input"
 set_pin(0, -1)
 set_pin(1, -1)
 set_pin(2, -1)
+set_pin(3, -1)
 
+print "start while loop"
 while True:
-    x = int(raw_input("Pin (0 to 5):"))
+    x = int(raw_input("Pin (0 to 11):"))
     light_led(x)
