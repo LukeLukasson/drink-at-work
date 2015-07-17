@@ -1,7 +1,7 @@
-import RPi.GPIO as GPIO
+import wiringpi2 as wiringpi
 
 # GPIOs
-pins = [17, 18, 27, 22]
+pins = [0, 1, 2, 3]
 
 # 1 High, 0 Low, -1 HighImpedance
 pin_led_states = [
@@ -19,17 +19,20 @@ pin_led_states = [
   [-1, -1, 0, 1]  # 1
 ]
 
-print "set mode to GPIO.BCM"
-GPIO.setmode(GPIO.BCM)
+print "set mode to GPIO mode ("
+wiringpi.wiringPiSetup()
 
+# 0 input
+# 1 output
+# 2 alternative function
 def set_pin(pin_index, pin_state):
     if pin_state == -1:
 	print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to input"
-        GPIO.setup(pins[pin_index], GPIO.IN)
+        wiringpi.pinMode(pins[pin_index], 0)
 	print "success"
     else:
-        GPIO.setup(pins[pin_index], GPIO.OUT)
-        GPIO.output(pins[pin_index], pin_state)
+        wiringpi.pinMode(pins[pin_index], 1)
+        wiringpi.digitalWrite(pins[pin_index], pin_state)
 
 def light_led(led_number):
     for pin_index, pin_state in enumerate(pin_led_states[led_number]):
