@@ -48,3 +48,10 @@ print "start while loop"
 while True:
     x = int(raw_input("Pin (0 to 11):"))
     light_led(x)
+    
+# Exit on CTRL+C -> clean up (set all pins to input)
+finally:
+    set_pin(0, -1)
+    set_pin(1, -1)
+    set_pin(2, -1)
+    set_pin(3, -1)
