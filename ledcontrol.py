@@ -66,14 +66,14 @@ def light_led(led_number):
         set_pin(pin_index, pin_state)
         
 # Light up Level
-#   Input:      level       Light up level 0 - 11
+#   Input:      level       Light up level 1 - 12
 def light_level(level):
     set_pin(0, -1)          # clear all pins
     set_pin(1, -1)
     set_pin(2, -1)
     set_pin(3, -1)
     while True:
-        for n in level:         # go through all LEDs
+        for n in range(0,level):         # go through all LEDs
             light_led(n)
             time.sleep(led_pause)
         
@@ -90,5 +90,5 @@ set_pin(3, -1)
 
 if debug: print "start while loop"
 while True:
-    x = int(raw_input("Pin (0 to 11):"))
+    x = int(raw_input("Level (1 to 12):"))
     light_level(x)
