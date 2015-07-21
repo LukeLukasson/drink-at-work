@@ -52,10 +52,10 @@ pin_led_states = [
 #           pin_state       0 input, 1 output, 2 alternative function
 def set_pin(pin_index, pin_state):
     if pin_state == -1:
-	    if debug: print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to input"
+        if debug: print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to input"           
         wiringpi.pinMode(pins[pin_index], 0)
     else:
-	    if debug: print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to output"
+        if debug: print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to output"
         wiringpi.pinMode(pins[pin_index], 1)
         wiringpi.digitalWrite(pins[pin_index], pin_state)
 
