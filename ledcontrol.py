@@ -17,7 +17,7 @@ import time
 debug = 1
 
 # Haptic limit
-led_pause = 0.0025            # 400 Hz -> short pause in between different LEDs will trick human eye
+led_pause = 0.001            # 1 kHz -> short pause in between different LEDs will trick human eye
                                 #   400 Hz > 11 * 30 Hz (maximal pause until same LED is light again)
 
 # GPIO mode
@@ -30,18 +30,18 @@ pins = [0, 1, 2, 3]
 # 1 High, 0 Low, -1 HighImpedance
 # defined by drawing
 pin_led_states = [
-  [1, -1, 0, -1], # 11
-  [1, -1, -1, 0], # 10
-  [0, -1, 1, -1], # 9
-  [0, -1, 1, -1], # 8
-  [-1, 0, 1, -1], # 7
-  [-1, 1, -1, 0], # 6
-  [-1, 1, 0, -1], # 5
-  [-1, 0, -1, 1], # 4
-  [1, 0, -1, -1], # 3
-  [-1, -1, 1, 0], # 2
-  [0, 1, -1, -1], # 1
-  [-1, -1, 0, 1]  # 0
+  [1, -1, 0, -1], # 0 (red light)
+  [1, -1, -1, 0], # 1 (orange light)
+  [0, -1, 1, -1], # 2 (green light)
+  [0, -1, 1, -1], # 3
+  [-1, 0, 1, -1], # 4
+  [-1, 1, -1, 0], # 5
+  [-1, 1, 0, -1], # 6
+  [-1, 0, -1, 1], # 7
+  [1, 0, -1, -1], # 8
+  [-1, -1, 1, 0], # 9
+  [0, 1, -1, -1], # 10
+  [-1, -1, 0, 1]  # 11
 ]
 
 #------------------
@@ -51,11 +51,9 @@ pin_led_states = [
 #   Input:  pin_index       doesn't matter which GPIO mode
 #           pin_state       0 input, 1 output, 2 alternative function
 def set_pin(pin_index, pin_state):
-    if pin_state == -1:
-        if debug: print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to input"           
+    if pin_state == -1:           
         wiringpi.pinMode(pins[pin_index], 0)
     else:
-        if debug: print "set pin " + str(pin_index) + " (" + str(pins[pin_index]) + ") to output"
         wiringpi.pinMode(pins[pin_index], 1)
         wiringpi.digitalWrite(pins[pin_index], pin_state)
 
@@ -72,11 +70,12 @@ def light_level(level):
     set_pin(1, -1)
     set_pin(2, -1)
     set_pin(3, -1)
-    while True:
+    m = 800
+    while m > 0:
         for n in range(0,level):         # go through all LEDs
             light_led(n)
             time.sleep(led_pause)
-        
+        m -= 1
 
         
 
@@ -90,5 +89,9 @@ set_pin(3, -1)
 
 if debug: print "start while loop"
 while True:
-    x = int(raw_input("Level (1 to 12):"))
-    light_level(x)
+    x = int(raw_input("Light up LED: "))
+    light_led(x)
+    time.sleep(2)
+    for i in range(-1,11):
+		light_led(i)
+		time.sleep(0.3)
