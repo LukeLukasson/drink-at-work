@@ -60,7 +60,7 @@ def set_pin(pin_index, pin_state):
 # Light up LED
 #   Input:      led_number  Number of LEDs = Rows of matrix pin_led_states
 def light_led(led_number):
-    for pin_index, pin_state in enumerate(pin_led_states[led_number]):
+    for pin_index, pin_state in enumerate(pin_led_states[11-led_number]):
         set_pin(pin_index, pin_state)
         
 # Light up Level
@@ -92,6 +92,6 @@ while True:
     x = int(raw_input("Light up LED: "))
     light_led(x)
     time.sleep(2)
-    for i in range(-1,11):
+    for i in range(0,12):
 		light_led(i)
 		time.sleep(0.3)
