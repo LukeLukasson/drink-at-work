@@ -3,8 +3,9 @@
 #------------------
 # Simplifications/Mitigations:
 #
-#   o   light_level: lights level while True -> does it stop when new light_level is called? -> token necessary?
+#   x   light_level: lights level while True -> does it stop when new light_level is called? -> token necessary?
 #   o   maybe led_pause cannot be constant (trial and error)
+#	o	introduce self testing function
 
 # Use wiringpi2 in order to control the GPIOs of the RaspberryPi 2
 import wiringpi2 as wiringpi
