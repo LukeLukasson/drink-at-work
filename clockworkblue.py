@@ -7,7 +7,7 @@
 #   x   Simulate snooze button by pressing enter
 #	x	Include smart cycles including working hours and amount of water
 #   o   Constant amount of LEDs -> adapt interval accordingly
-#   o   Mount LEDs (with Charlieplexing)
+#   x   Mount LEDs (with Charlieplexing)
 #   o   Easy Interface to start and stop and reset system
 #   o   Settings externally available and dynamically changeable
 #   o   Mute switch
@@ -15,15 +15,15 @@
 #------------------
 # Simplifications/Mitigations:
 #
-#   o   Interval fixed at 0.3 -> adapt interval with remaining time
+#   x   Interval fixed at 0.3 -> adapt interval with remaining time
 #   o   Constant working hours (always 8h)
 #   o   Ignore lunch time
 #   o   What happens if you drink in between warnings?
 #   o   Only considering mornings (to end at 11.30) -> ignoring afternoons (to end at 16.00)
 
 import datetime
-import random
 import time
+import ledcontrol
 
 #------------------
 # Global Settings
@@ -36,13 +36,13 @@ l_tot = 1.4                     # total amount of water to drink per day
 l_gone = 0                      # water drank till start of day
 l_interval = 0.2                # goal to drink each t_def
 
-# Timing Settings (testing: 10min = 1s)
-t_tot = 4 * 6                   # total of hours at desk in [s]
-t_def = 6                       # default interval in [s]
-t_ad = 0                        # adapted interval in [s] (start the day with a glass of water -> t_ad = 0)
+# Timing Settings
+t_tot = 4 * 60 * 4              # total of hours at desk in [s]
+t_def = 50                      # default interval in [s]
+t_ad = t_def                    # adapted interval in [s] (start the day with a glass of water -> t_ad = 0)
 
 # LED Settings
-n_leds = 5                      # number of LEDs available
+n_leds = 12                     # number of LEDs available
 
 # Counters
 c_morning = 7
@@ -55,19 +55,19 @@ c_morning = 7
 # Countdown
 #   Input:      n   Number of seconds
 def countdown(n):
-    while n > 0:
-        #print (n)
-        led_shine(n)
-        n -= 1
-        time.sleep(1)
-    return 0
+	part = int(n/n_leds)
+	if debug: print "time in s = " + str(n) + " and part = " + str(part)
+	cntdwn_start = datetime.datetime.now()
+	for i in range(n_leds,0,-1):			# i = 12 ... 1
+		ledcontrol.light_level(i, part)
+	return 0
     
 # Light up LED
 #   Input:      x       LED x
 #   Output:     LED lights up
 def led_shine(x):
     print x * "*"
-    #print "LED " + str(x) + " lights up!"
+    print "LED " + str(x) + " lights up!"
     return 0
     
 # Time to drink!
@@ -96,7 +96,7 @@ def update_interval(n):
 # Algorithm
 shift_start = datetime.datetime.now()
 if debug: print "Shift started: " + str(shift_start)
-shift_end = datetime.datetime.combine(datetime.date.today(), datetime.time(01, 18, 00))
+shift_end = shift_start + datetime.timedelta(hours=1)
 if debug: print "Shift to end:  " + str(shift_end)
 
 while l_gone < l_tot:
