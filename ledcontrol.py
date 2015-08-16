@@ -6,6 +6,7 @@
 #   x   light_level: lights level while True -> does it stop when new light_level is called? -> token necessary?
 #   o   maybe led_pause cannot be constant (trial and error)
 #	o	introduce self testing function
+#   o   Level 1 must blink!!! (or level below 1...)
 
 # Use wiringpi2 in order to control the GPIOs of the RaspberryPi 2
 import wiringpi2 as wiringpi
@@ -91,14 +92,3 @@ def clear_pins():
 # Algorithm
 if debug: print "set all pins to input"             # clear all pins
 clear_pins()
-
-if debug: print "start while loop"
-while True:
-    x = int(raw_input("Light up LED: "))
-    light_led(x)
-    time.sleep(2)
-    light_level(12, 2)
-    for i in range(1,13):
-		if debug: print "Level = " + str(i)
-		light_level(i, 0.5)
-    clear_pins()
