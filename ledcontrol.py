@@ -8,8 +8,8 @@
 #	o	introduce self testing function
 #   o   Level 1 must blink!!! (or level below 1...)
 
-# Use wiringpi2 in order to control the GPIOs of the RaspberryPi 2
-import wiringpi2 as wiringpi
+# Use RPi.GPIO in order to control the GPIOs of the RaspberryPi 2
+import RPi.GPIO as GPIO
 import time
 import datetime
 
@@ -24,11 +24,11 @@ led_pause = 0.001            # 1 kHz -> short pause in between different LEDs wi
                                 #   400 Hz > 11 * 30 Hz (maximal pause until same LED is light again)
 
 # GPIO mode
-if debug: print "set mode to wiringpi mode (GPIO 0 = GPIO 17 (BCM) = Pin 11 (phys.))"
-wiringpi.wiringPiSetup()
+if debug: print "set mode to GPIO.BCM mode (GPIO 0 = GPIO 17 (BCM) = Pin 11 (phys.))"
+GPIO.setmode(GPIO.BCM)
 
 # GPIOs
-pins = [0, 1, 2, 3]
+pins = [17, 18, 27, 22] # BCM
 
 # 1 High, 0 Low, -1 HighImpedance
 # defined by drawing
@@ -51,14 +51,22 @@ pin_led_states = [
 # Help Functions
 #
 # Set single pin to state
-#   Input:  pin_index       doesn't matter which GPIO mode
-#           pin_state       0 input, 1 output, 2 alternative function
+#   Input:  pin_index       0, 1, 2, 3
+#           pin_state       1 High, 0 Low, -1 HighImpedance
 def set_pin(pin_index, pin_state):
     if pin_state == -1:           
-        wiringpi.pinMode(pins[pin_index], 0)
+        print pin_index
+        print pins[pin_index]
+        GPIO.setup(pins[pin_index], GPIO.IN)
+        print "I got past the setup!"
     else:
-        wiringpi.pinMode(pins[pin_index], 1)
-        wiringpi.digitalWrite(pins[pin_index], pin_state)
+        GPIO.setup(pins[pin_index], GPIO.OUT)
+        if pin_state == 1:
+            GPIO.output(pins[pin_index], GPIO.HIGH)
+        if pin_state == 0:
+            GPIO.output(pins[pin_index], GPIO.LOW)
+        else:
+            print "No valid input for pin_state: 1 High, 0 Low, -1 HighImpedance"
 
 # Light up LED
 #   Input:      led_number  Number of LEDs = Rows of matrix pin_led_states
@@ -82,13 +90,19 @@ def light_level(level, t):
 
 # Clear Pins
 def clear_pins():
-    set_pin(0, -1)
-    set_pin(1, -1)
-    set_pin(2, -1)
-    set_pin(3, -1)
+	print "Set 0 to input"
+	set_pin(0, -1)
+	print "Set 1 to input"
+	set_pin(1, -1)
+	set_pin(2, -1)
+	set_pin(3, -1)
         
 
 #------------------
 # Algorithm
 if debug: print "set all pins to input"             # clear all pins
 clear_pins()
+while True:
+	x = int(raw_input("Light up LED: "))
+	light_led(x)
+	time.sleep(2)
