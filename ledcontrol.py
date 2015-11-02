@@ -20,7 +20,7 @@ import datetime
 debug = 1
 
 # Haptic limit
-led_pause = 0.001            # 1 kHz -> short pause in between different LEDs will trick human eye
+led_pause = 0.002            # 1 kHz -> short pause in between different LEDs will trick human eye
                                 #   400 Hz > 11 * 30 Hz (maximal pause until same LED is light again)
 
 # GPIO mode
@@ -55,18 +55,13 @@ pin_led_states = [
 #           pin_state       1 High, 0 Low, -1 HighImpedance
 def set_pin(pin_index, pin_state):
     if pin_state == -1:           
-        print pin_index
-        print pins[pin_index]
         GPIO.setup(pins[pin_index], GPIO.IN)
-        print "I got past the setup!"
     else:
         GPIO.setup(pins[pin_index], GPIO.OUT)
         if pin_state == 1:
             GPIO.output(pins[pin_index], GPIO.HIGH)
         if pin_state == 0:
             GPIO.output(pins[pin_index], GPIO.LOW)
-        else:
-            print "No valid input for pin_state: 1 High, 0 Low, -1 HighImpedance"
 
 # Light up LED
 #   Input:      led_number  Number of LEDs = Rows of matrix pin_led_states
@@ -90,9 +85,7 @@ def light_level(level, t):
 
 # Clear Pins
 def clear_pins():
-	print "Set 0 to input"
 	set_pin(0, -1)
-	print "Set 1 to input"
 	set_pin(1, -1)
 	set_pin(2, -1)
 	set_pin(3, -1)
@@ -100,9 +93,21 @@ def clear_pins():
 
 #------------------
 # Algorithm
-if debug: print "set all pins to input"             # clear all pins
+if debug: print "clear all pins"             # clear all pins
 clear_pins()
-while True:
-	x = int(raw_input("Light up LED: "))
-	light_led(x)
-	time.sleep(2)
+
+#------------------
+# Self-Test
+#
+# Only active if called directly as main
+if __name__ == "__main__":
+	while True:
+		for i in range(0,12):
+			light_led(i)
+			time.sleep(0.2)
+		for i in range(1,13):
+			if i == 12:
+				t = 2.0
+			else:
+				t = 0.3
+			light_level(i, t)
